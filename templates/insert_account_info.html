@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insert Account Info</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_insert_account_info.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Insert New Account Information</h1>
+    <form id="account-form">
+      <div class="form-group">
+        <label for="account_name">Account Name:</label>
+        <input type="text" id="account_name" name="account_name" required>
+      </div>
+      <div class="form-group">
+        <label for="vertical_name">Vertical Name:</label>
+        <input type="text" id="vertical_name" name="vertical_name" required>
+      </div>
+      <div class="form-group">
+        <label for="account_head_id">Account Head ID:</label>
+        <input type="number" id="account_head_id" name="account_head_id" required>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="message"></div>
+  </div>
+  <script src="{{ url_for('static', filename='script_insert_account_info.js') }}"></script>
+</body>
+</html>

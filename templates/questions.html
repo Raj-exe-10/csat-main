@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<form id="uploadForm">
+  <input type="file" id="questionFile" name="questionFile" accept=".xlsx">
+  <button type="submit">Upload Questions</button>
+</form>
+
+<div id="questionContainer"></div>
+
+<script src="{{ url_for('static', filename='question.js') }}"></script>
+</body>
+</html>

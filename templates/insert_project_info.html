@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insert Project Information</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_insert_user.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Insert New Project</h1>
+    <form id="project-form">
+      <div class="form-group">
+        <label for="account_id">Account ID:</label>
+        <input type="number" id="account_id" name="account_id" required>
+      </div>
+      <div class="form-group">
+        <label for="project_name">Project Name:</label>
+        <input type="text" id="project_name" name="project_name" required>
+      </div>
+      <div class="form-group">
+        <label for="project_started_on">Project Started On:</label>
+        <input type="date" id="project_started_on" name="project_started_on" required>
+      </div>
+      <div class="form-group">
+        <label for="project_end_date">Project End Date:</label>
+        <input type="date" id="project_end_date" name="project_end_date" required>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="message"></div>
+  </div>
+  <script src="{{ url_for('static', filename='script_insert_project.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    display: flex; /* Center content horizontally */
+    justify-content: center; /* Align content in center */
+    align-items: center; /* Align content vertically in center (for full screen) */
+    min-height: 100vh; /* Set minimum height for full viewport */
+    background-color: #f5f5f5; /* Light background color */
+  }
+  
+  .container {
+    background-color: #fff; /* White background for the form */
+    padding: 20px;
+    border-radius: 5px; /* Rounded corners for a softer look */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+    width: 350px; /* Set a fixed width for the form */
+  }
+  
+  h1 {
+    text-align: center; /* Center the title */
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block; /* Make labels on separate lines */
+    margin-bottom: 5px;
+  }
+  
+  input, select {
+    width: 100%; /* Make input fields take up full width */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+  
+  button {
+    width: 100%; /* Make button take up full width */
+    padding: 10px 15px;
+    background-color: #4CAF50; /* Green color */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45A049; /* Darker green on hover */
+  }
+  
