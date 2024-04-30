@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    display: flex; /* Center content horizontally */
+    justify-content: center; /* Align content in center */
+    align-items: center; /* Align content vertically in center (for full screen) */
+    min-height: 100vh; /* Set minimum height for full viewport */
+    background-color: #f5f5f5; /* Light background color */
+  }
+  
+  h1 {
+    text-align: center; /* Center the title */
+    margin-bottom: 20px;
+  }
+  
+  #csat-id-list {
+    margin-top: 20px;
+  }
+  
+  #csat-id-list ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  #csat-id-list li {
+    margin-bottom: 5px;
+  }
+  

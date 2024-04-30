@@ -232,6 +232,41 @@ def insert_csat_rating():
         if conn:
             conn.close()
 
+# API route to insert data into 'project_csat_questions' table
+@app.route("/insert_csat_question", methods=['POST'])  
+def insert_csat_question():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    # Update the field checks to match your new table columns
+    required_fields = ['csat_request_id', 'questions']
+    if not all([data.get(field) for field in required_fields]):
+        return jsonify({'error': 'Missing data for required fields'}), 400
+
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = conn.cursor()
+        # Update the SQL query to insert data into the 'project_csat_customer_rating' table
+        cursor.execute(
+            "INSERT INTO project_csat_questions (csat_request_id, questions) VALUES (%s, %s)",
+            ( data['csat_request_id'], data['questions'])
+        )
+        conn.commit()
+        return jsonify({'message': 'CSAT question inserted successfully'}), 201
+    except Exception as e:
+        conn.rollback()
+        app.logger.error("Failed to insert CSAT rating data:", e)
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 # fetching the projects related to a particular account id.
 @app.route("/get_projects_by_account_id/<int:account_id>", methods=["GET"])
 def get_projects_by_account_id(account_id):
@@ -380,10 +415,20 @@ def insert_account_info_page():
     return render_template('insert_account_info.html')
 
 
-# Route to page for uploading questions from the excel file on the local system
 @app.route('/upload_questions_page')
 def upload_questions_page():
-    return render_template('questions.html')
+    csat_id = request.args.get('csat_id')  # Access the CSAT ID from the query parameter
+    print(csat_id)
+    return render_template('questions.html', csat_id=csat_id)
+
+# Route to page for uploading questions from the excel file on the local system
+@app.route('/csat_id_page')
+def csat_id_page():
+    return render_template('get_csat_id_form.html')
+
+@app.route('/review')
+def csat_id_page():
+    return render_template('get_csat_id_form.html')
 
 # Start the Flask app
 if __name__ == '__main__':
