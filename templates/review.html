@@ -1,35 +1,15 @@
 <!DOCTYPE html>
 <html>
-<head>
-    meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review page</title>
+  <head>
+    <title>Review Questions</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='review.css') }}">
-</head>
-<body>
-  <div class="container">
-    <h2>Insert Questions</h2>
-    <p id="csat-id-display">CSAT ID: {{ csat_id }}</p>
-
-    <div id="questionContainer"></div>
-
-    <div class="btn-group">
-      <button id="backButton">Back</button>
-      <button id="confirmButton">Confirm</button>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Review Questions</h2>
+      <p>CSAT ID: {{ csat_id }}</p>
+      <div id="questionContainer"></div>
     </div>
-
-    <div id="confirmationModal" class="modal">
-      <div class="modal-content">
-        <p>Are you sure you want to submit your ratings?</p>
-        <div class="btn-group">
-          <button id="submitYes">Yes</button>
-          <button id="submitNo">No</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <script src="{{ url_for('static', filename='question.js') }}"></script>
-</body>
+    <script src="{{ url_for('static', filename='review.js') }}"></script>
+  </body>
 </html>

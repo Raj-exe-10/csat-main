@@ -126,7 +126,16 @@
         resize: none;
       }
 
-      .editButton {
+      .editableTextbox {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+        resize: none;
+      }
+
+      .btn-edit {
         display: inline-block;
         background-color: #007bff;
         color: #fff;
@@ -138,8 +147,61 @@
         text-align: center;
       }
 
-      .editButton:hover {
+      .btn-edit:hover {
         background-color: #0056b3; /* Darker blue on hover */
+      }
+
+      #submitButton {
+        width: 100%;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      #submitButton:hover {
+        background-color: #0056b3;
+      }
+
+      /* Popup styles */
+      .upload-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        display: none;
+      }
+
+      .upload-popup.success {
+        background-color: #dff0d8;
+        color: #4caf50;
+      }
+
+      .upload-popup.error {
+        background-color: #f7d3d3;
+        color: rgb(245, 60, 60);
+      }
+
+      .close-popup-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        padding: 5px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        background-color: #ddd;
+      }
+
+      .selected-file-name {
+        margin-bottom: 10px;
       }
     </style>
   </head>
@@ -160,22 +222,18 @@
           name="questionFile"
           accept=".xlsx"
         />
-        <label for="questionFile">Choose File</label>
-        <button id="upload" type="submit">Upload Questions</button>
+        <label for="questionFile">Choose File and Upload</label>
+        <span class="selected-file-name"></span>
       </form>
 
       <div id="questionContainer"></div>
-      <!-- <div id="questionContainer">
-        <div class="questionBox">
-          <textarea class="readOnlyTextbox" readonly="true">
-how satisfied are you from our service</textarea
-          >
-          <div class="btn-grp">
-            <button class="btn-edit">Edit</button>
-            <button class="btn-delete">Delete</button>
-          </div>
-        </div>
-      </div> -->
+
+      <button id="submitButton">Submit</button>
+    </div>
+
+    <div class="upload-popup">
+      <p id="uploadMessage"></p>
+      <button class="close-popup-btn">Close</button>
     </div>
 
     <script src="{{ url_for('static', filename='question.js') }}"></script>

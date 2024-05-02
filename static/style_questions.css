@@ -52,3 +52,76 @@ button {
 button:hover {
   background-color: #45a049; /* Darker green on hover */
 }
+
+
+#submitButton {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+#submitButton:hover {
+  background-color: #0056b3;
+}
+
+/* Popup styling */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+}
+
+.popup p {
+  margin-bottom: 10px;
+}
+
+/* Popup styles */
+.upload-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+.upload-popup.success {
+  background-color: #dff0d8;
+  color: #4caf50;
+}
+
+.upload-popup.error {
+  background-color: #f7d3d3;
+  color: rgb(245, 60, 60);
+}
+
+.close-popup-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+}
+
+.selected-file-name {
+  margin-bottom: 10px;
+}
+/* Remove styling for the upload button */
+#upload {
+  display: none;
+}
+

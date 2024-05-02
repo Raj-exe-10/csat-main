@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify,url_for
+from flask import Flask, render_template, request, jsonify,url_for,json
 from mysql.connector import connect, Error
 import logging
 from openpyxl import load_workbook
@@ -17,8 +17,8 @@ app.config['SECRET_KEY'] = '12b634b098308d0dd6a7472e6744a1d1'  # Use a real secr
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your email.com'
-app.config['MAIL_PASSWORD'] = 'your code'
+app.config['MAIL_USERNAME'] = 'furynick830@gmail.com'
+app.config['MAIL_PASSWORD'] = 'vtaf gmby zhsg oheg'
 mail = Mail(app)
 
 # Serializer for generating tokens
@@ -426,9 +426,19 @@ def upload_questions_page():
 def csat_id_page():
     return render_template('get_csat_id_form.html')
 
-@app.route('/review')
-def csat_id_page():
-    return render_template('get_csat_id_form.html')
+@app.route('/review', methods=['GET'])
+def review_questions():
+    questions = json.loads(request.args.get('questions'))
+    csat_id = request.args.get('csatId')
+    return render_template('review.html', questions=questions, csat_id=csat_id)
+
+@app.route('/submit_ratings', methods=['POST'])
+def submit_ratings():
+    ratings = request.get_json()
+    # Process the ratings data as needed
+    # For example, you can save the ratings to a database
+    print(ratings)
+    return jsonify({'success': True})
 
 # Start the Flask app
 if __name__ == '__main__':
