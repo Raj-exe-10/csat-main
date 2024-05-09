@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Questions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='review_user.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Review Questions for CSAT ID: {{ csat_id }}</h1>
+        <form id="reviewForm">
+            {% for question in questions %}
+            <div class="question-box">
+                <label for="question-{{ loop.index }}">{{ question }}</label>
+                <div class="rating">
+                    <!-- Create a star rating system -->
+                    {% for star in range(1, 6) %}
+                    <input type="radio" id="star{{ star }}-question{{ loop.index }}" name="rating-question{{ loop.index }}" value="{{ star }}" />
+                    <label class="star" for="star{{ star }}-question{{ loop.index }}">★</label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            <button type="submit">Submit Reviews</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='review_user.js') }}"></script>
+</body>
+</html>

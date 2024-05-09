@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request, jsonify,url_for,json
 from mysql.connector import connect, Error
 import logging
+import jwt
 from openpyxl import load_workbook
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import logging
 logging.basicConfig(level=logging.DEBUG)
-
+from datetime import datetime, timedelta
 
 # Intialising the flask app 
 app = Flask(__name__)
@@ -18,7 +19,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'furynick830@gmail.com'
-app.config['MAIL_PASSWORD'] = 'vtaf gmby zhsg oheg'
+app.config['MAIL_PASSWORD'] = 'rhva curi vmfs ikcg'
 mail = Mail(app)
 
 # Serializer for generating tokens
@@ -267,6 +268,43 @@ def insert_csat_question():
         if conn:
             conn.close()
 
+
+# Route to insert data into the project_csat_customer_rating table
+@app.route('/insert_csat_rating', methods=['POST'])
+def insert_csat_rating():
+    # Obtain data from request
+    data = request.get_json()
+    csat_request_id = data.get('csat_request_id')
+    csat_question_id = data.get('csat_question_id')
+    csat_rating = data.get('csat_rating')
+
+    # Check if all necessary data is present
+    if not all([csat_request_id, csat_question_id, csat_rating]):
+        return jsonify({"error": "Missing one or more required fields"}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = conn.cursor()
+        query = """
+        INSERT INTO project_csat_customer_rating (csat_request_id, csat_question_id, csat_rating)
+        VALUES (%s, %s, %s)
+        """
+        cursor.execute(query, (csat_request_id, csat_question_id, csat_rating))
+        conn.commit()
+        return jsonify({"message": "CSAT rating inserted successfully"}), 201
+    except Error as e:
+        conn.rollback()  # Roll back the transaction in case of error
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+            
 # fetching the projects related to a particular account id.
 @app.route("/get_projects_by_account_id/<int:account_id>", methods=["GET"])
 def get_projects_by_account_id(account_id):
@@ -358,10 +396,21 @@ def upload_questions():
     return jsonify({"error": "Error processing file"}), 500
 
 
-@app.route('/send_link', methods=['POST'])
-def send_link():
-    data = request.get_json()
-    customer_id = data['customer_id']
+@app.route('/send_review_link', methods=['POST'])
+def send_review_link():
+    csat_id = request.json.get('csat_id')
+    questions = request.json.get('questions')
+    customer_id = request.json.get('customer_id')
+    print('questions',questions)
+    # Create a token that expires in 24 hours
+    expiration = datetime.utcnow() + timedelta(hours=24)
+    token = jwt.encode({
+        'csat_id': csat_id,
+        'questions': questions,
+        'customer_id': customer_id,
+        'exp': expiration
+    }, app.config['SECRET_KEY'], algorithm='HS256')
+
     conn = get_db_connection()
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
@@ -369,18 +418,19 @@ def send_link():
     try:
         cursor = conn.cursor()
         cursor.execute("SELECT email FROM user_info WHERE id = %s", (customer_id,))
-        user = cursor.fetchone()
-        if user:
-            email = user[0]
-            token = s.dumps(email, salt='email-confirm')
-            link = url_for('confirm_email', token=token, _external=True)
-            msg = Message('Confirm Email', sender='furynick830@gmail.com', recipients=[email])
-            msg.body = f'Your link is {link}. It is valid for 10 minutes.'
-            mail.send(msg)
-            return jsonify({'message': 'Email sent successfully!'})
-        else:
-            return jsonify({'error': 'User not found'}), 404
-    except Error as e:
+        customer_email = cursor.fetchone()
+        if customer_email is None:
+            return jsonify({"error": "No email found for given customer ID"}), 404
+
+        email = customer_email[0]  # Assuming the email is in the first column of the results
+        link = url_for('review_user', token=token, _external=True)
+
+        # Send the email
+        msg = Message("Review Questions", sender=app.config['MAIL_USERNAME'], recipients=[email])
+        msg.body = f"Please complete the following review questions: {link}"
+        mail.send(msg)
+        return jsonify({'message': 'Email sent successfully!'}), 200
+    except Exception as e:
         app.logger.error("Failed to send email:", e)
         return jsonify({'error': str(e)}), 500
     finally:
@@ -389,14 +439,25 @@ def send_link():
         if conn:
             conn.close()
 
-# API to check whether the link is still active or not
-@app.route('/confirm_email/<token>')
-def confirm_email(token):
+@app.route('/review_user/<token>')
+def review_user(token):
     try:
-        email = s.loads(token, salt='email-confirm', max_age=600)  # 600 seconds = 10 minutes
-        return 'The link is valid and confirmed for the email: {}'.format(email)
-    except SignatureExpired:
-        return '<h1>The link is expired!</h1>'
+        # Decode the JWT token
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+
+        # Extract the csat_id, questions, and customer_id from the token
+        csat_id = data['csat_id']
+        questions = data['questions']  # Questions are now coming directly from the token
+        print(questions)
+        customer_id = data['customer_id']  # Customer ID is also retrieved from the token
+
+        # Render the HTML template with the data from the token
+        return render_template('review_user.html', csat_id=csat_id, questions=questions, customer_id=customer_id)
+    except jwt.ExpiredSignatureError:
+        return 'This link has expired.', 403
+    except Exception as e:
+        return str(e), 500
+
 
 
 # Route to serve the insertion form
@@ -418,13 +479,15 @@ def insert_account_info_page():
 @app.route('/upload_questions_page')
 def upload_questions_page():
     csat_id = request.args.get('csat_id')  # Access the CSAT ID from the query parameter
+    customer_id = request.args.get('customer_id') # Access the customer_id as the query parameter
     print(csat_id)
-    return render_template('questions.html', csat_id=csat_id)
+    print(customer_id)
+    return render_template('questions.html', csat_id=csat_id,customer_id=customer_id)
 
 # Route to page for uploading questions from the excel file on the local system
 @app.route('/csat_id_page')
 def csat_id_page():
-    return render_template('get_csat_id_form.html')
+    return render_template('csat_id.html')
 
 @app.route('/review', methods=['GET'])
 def review_questions():
@@ -432,8 +495,8 @@ def review_questions():
     csat_id = request.args.get('csatId')
     return render_template('review.html', questions=questions, csat_id=csat_id)
 
-@app.route('/submit_ratings', methods=['POST'])
-def submit_ratings():
+@app.route('/submit_ratings_admin', methods=['POST'])
+def submit_ratings_admin():
     ratings = request.get_json()
     # Process the ratings data as needed
     # For example, you can save the ratings to a database

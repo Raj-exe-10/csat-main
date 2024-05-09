@@ -1,241 +1,30 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        display: flex; /* Center content horizontally */
-        justify-content: center; /* Align content in center */
-        align-items: center; /* Align content vertically in center (for full screen) */
-        min-height: 100vh; /* Set minimum height for full viewport */
-        background-color: #f5f5f5; /* Light background color */
-      }
-
-      .container {
-        background-color: #fff; /* White background for the form */
-        padding: 20px;
-        border-radius: 5px; /* Rounded corners for a softer look */
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-        width: 350px; /* Set a fixed width for the form */
-      }
-
-      h2 {
-        text-align: center; /* Center the title */
-        margin-bottom: 20px;
-      }
-
-      .form-group {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-      }
-
-      label {
-        margin-bottom: 5px;
-      }
-
-      input,
-      select {
-        width: 100%; /* Make input fields take up full width */
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-sizing: border-box; /* Include padding in width calculation */
-      }
-
-      .questionBox {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-      }
-
-      .btn-grp {
-        display: flex;
-        justify-content: center;
-        margin: 5px 0;
-      }
-
-      button {
-        width: fit-content; /* Make button take up full width */
-        padding: 10px 15px;
-        background-color: #4caf50; /* Green color */
-        color: white;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        margin: 0 4px;
-      }
-
-      /* button:hover {
-        background-color: #45a049;
-      } */
-
-      .btn-delete {
-        background-color: rgb(245, 60, 60);
-      }
-
-      #upload {
-        width: fit-content;
-        height: 2.4rem;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        font-size: 16px;
-        cursor: pointer;
-      }
-
-      /* Additional styling for file upload section */
-      form {
-        margin: 0;
-      }
-
-      input[type="file"] {
-        display: none;
-      }
-
-      label {
-        display: inline-block;
-        background-color: #007bff;
-        color: #fff;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      #questionContainer {
-        display: flex;
-        flex-direction: column;
-        margin: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-
-      .questionBox {
-        margin-bottom: 10px;
-      }
-
-      .readOnlyTextbox {
-        /* width: calc(100% - 50px); */
-        height: auto;
-        padding: 5px;
-        border: none;
-        background-color: #f5f5f5;
-        resize: none;
-      }
-
-      .editableTextbox {
-        width: 100%;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-sizing: border-box;
-        resize: none;
-      }
-
-      .btn-edit {
-        display: inline-block;
-        background-color: #007bff;
-        color: #fff;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 40px;
-        text-align: center;
-      }
-
-      .btn-edit:hover {
-        background-color: #0056b3; /* Darker blue on hover */
-      }
-
-      #submitButton {
-        width: 100%;
-        padding: 10px 15px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        margin-top: 20px;
-      }
-
-      #submitButton:hover {
-        background-color: #0056b3;
-      }
-
-      /* Popup styles */
-      .upload-popup {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        display: none;
-      }
-
-      .upload-popup.success {
-        background-color: #dff0d8;
-        color: #4caf50;
-      }
-
-      .upload-popup.error {
-        background-color: #f7d3d3;
-        color: rgb(245, 60, 60);
-      }
-
-      .close-popup-btn {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        padding: 5px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        background-color: #ddd;
-      }
-
-      .selected-file-name {
-        margin-bottom: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2>Insert Questions</h2>
-      <p id="csat-id-display">CSAT ID: {{ csat_id }}</p>
-      <form
-        class="form-group"
-        id="uploadForm"
-        action="/upload"
-        method="post"
-        enctype="multipart/form-data"
-      >
-        <input
-          type="file"
-          id="questionFile"
-          name="questionFile"
-          accept=".xlsx"
-        />
-        <label for="questionFile">Choose File and Upload</label>
-        <span class="selected-file-name"></span>
-      </form>
-
-      <div id="questionContainer"></div>
-
-      <button id="submitButton">Submit</button>
-    </div>
-
-    <div class="upload-popup">
-      <p id="uploadMessage"></p>
-      <button class="close-popup-btn">Close</button>
-    </div>
-
-    <script src="{{ url_for('static', filename='question.js') }}"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Question Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_questions.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous"/>
+</head>
+<body>
+  <div class="container">
+    <h2>Insert Questions</h2>
+    <p id="csat-id-display">CSAT ID: {{ csat_id }}</p>
+    <p id="customer-id-display">CUSTOMER ID: {{ customer_id }}</p>
+    <form class="form-group" id="uploadForm" method="post" enctype="multipart/form-data">
+      <input type="file" id="questionFile" name="questionFile" accept=".xlsx">
+      <label for="questionFile" class="file-label"><i class="fas fa-upload"></i> Choose File and Upload</label>
+      <span class="selected-file-name"></span>
+    </form>
+    <button id="addMoreQuestionsBtn">Add More Questions</button>
+    <div id="questionContainer"></div>
+    <button id="submitButton">Submit</button>
+  </div>
+  <div class="upload-popup">
+    <p id="uploadMessage"></p>
+    <button class="close-popup-btn">Close</button>
+  </div>
+  <script src="{{ url_for('static', filename='question.js') }}"></script>
+</body>
 </html>

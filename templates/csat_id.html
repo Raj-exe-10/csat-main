@@ -7,11 +7,34 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='csat_id.css') }}">
 </head>
 <body>
-  <h1>Get CSAT IDs</h1>
-  <form id="csat-id-form">
-    <button type="submit">Fetch CSAT IDs</button>
-  </form>
-  <div id="csat-id-list"></div>
+  <div class="container">
+    <h1>Get CSAT IDs</h1>
+    <div class="account-selection">
+      <label for="account-select">Select Account:</label>
+      <select id="account-select" required>
+        <option value="">-- Select Account --</option>
+      </select>
+    </div>
+    <div class="project-selection hidden">
+      <label for="project-select">Select Project (Optional):</label>
+      <select id="project-select" disabled>
+        <option value="">-- Select Project --</option>
+      </select>
+    </div>
+    <form id="csat-id-form">
+      <div class="customer-id-input">
+        <label for="customer-id">Customer ID:</label>
+        <input type="text" id="customer-id" name="customer_id" required>
+      </div>
+      <div class="csat-id-input">
+        <label for="csat-id">CSAT ID:</label>
+        <input type="text" id="csat-id" name="csat_id" required>
+      </div>
+      <button type="submit">Submit</button>
+      <div class="loading-indicator hidden"><img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..."/></div>
+    </form>
+    <div id="csat-id-list"></div>
+  </div>
   <script src="{{ url_for('static', filename='csat_id.js') }}"></script>
 </body>
 </html>

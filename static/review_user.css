@@ -1,0 +1,49 @@
+/* Basic reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.question-box {
+    margin-bottom: 20px;
+}
+
+.rating {
+    direction: rtl; /* Reverse the order of star ratings for easier interaction */
+    font-size: 24px;
+}
+
+.rating > input {
+    display: none; /* Hide radio buttons */
+}
+
+.rating > label {
+    color: #ccc; /* Grey stars by default */
+    cursor: pointer;
+}
+
+.rating > input:checked ~ label,
+.rating > input:hover ~ label,
+.rating > label:hover ~ label { /* Color stars on hover or checked */
+    color: gold;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}

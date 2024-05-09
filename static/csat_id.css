@@ -1,28 +1,118 @@
+/* Import Google Font (optional) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    display: flex; /* Center content horizontally */
-    justify-content: center; /* Align content in center */
-    align-items: center; /* Align content vertically in center (for full screen) */
-    min-height: 100vh; /* Set minimum height for full viewport */
-    background-color: #f5f5f5; /* Light background color */
-  }
-  
-  h1 {
-    text-align: center; /* Center the title */
-    margin-bottom: 20px;
-  }
-  
-  #csat-id-list {
-    margin-top: 20px;
-  }
-  
-  #csat-id-list ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  #csat-id-list li {
-    margin-bottom: 5px;
-  }
-  
+  font-family: Roboto, sans-serif;
+  background-color: #f8f8f8;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 600px;
+  width: 100%;
+}
+
+h1 {
+  color: #4285F4;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.account-selection, .project-selection, .customer-id-input, .csat-id-input {
+  margin-bottom: 15px;
+}
+
+.account-selection label, .project-selection label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+input[type="text"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+#csat-id-form {
+  display: flex;
+  flex-direction: column;
+}
+
+button[type="submit"] {
+  background-color: #4285F4;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Enable submit button initially */
+  opacity: 1;
+  pointer-events: auto;
+}
+
+button[type="submit"]:disabled {
+  /* Disable submit button while fetching data */
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+#csat-id-list {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 600px;
+  width: 100%;
+}
+
+#csat-id-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#csat-id-list li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+#csat-id-list li:hover {
+  background-color: #f5f5f5;
+}
+
+.loading-indicator {
+  /* Initially hide the loading indicator */
+  display: none;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.loading-indicator img {
+  width: 30px;
+  height: 30px;
+}

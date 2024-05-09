@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Review Questions</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='review.css') }}">
-  </head>
-  <body>
-    <div class="container">
-      <h2>Review Questions</h2>
-      <p>CSAT ID: {{ csat_id }}</p>
-      <div id="questionContainer"></div>
-    </div>
-    <script src="{{ url_for('static', filename='review.js') }}"></script>
-  </body>
+</head>
+<body>
+<div class="container">
+    <h2>Review Questions</h2>
+    <p>CSAT ID: {{ csat_id }}</p>
+    <div id="questionContainer"></div>
+    <button id="sendButton">Send Link</button>
+</div>
+<script src="{{ url_for('static', filename='review.js') }}"></script>
+</body>
 </html>
