@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify,url_for,json
+from flask import Flask, render_template, request, jsonify,url_for,json,redirect,session
 from mysql.connector import connect, Error
 import logging
 import jwt
@@ -12,6 +12,10 @@ from datetime import datetime, timedelta
 # Intialising the flask app 
 app = Flask(__name__)
 
+# In-memory user store
+users = {
+    "admin": "password123"
+}
 
 # Initialising the mail 
 app.config['SECRET_KEY'] = '12b634b098308d0dd6a7472e6744a1d1'  # Use a real secret key in production
@@ -199,16 +203,14 @@ def insert_csat_request_info():
             conn.close()
 
 # API route to insert data into 'project_csat_customer_rating' table
-@app.route("/insert_csat_rating", methods=['POST'])  
+@app.route("/insert_csat_rating", methods=['POST'])
 def insert_csat_rating():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
-    data = request.get_json()
-    # Update the field checks to match your new table columns
-    required_fields = ['csat_request_id', 'csat_question_id', 'csat_rating']
-    if not all([data.get(field) for field in required_fields]):
-        return jsonify({'error': 'Missing data for required fields'}), 400
+    all_ratings = request.get_json().get('ratings')
+    if not all_ratings:
+        return jsonify({'error': 'No ratings provided'}), 400
 
     conn = get_db_connection()
     if conn is None:
@@ -216,22 +218,25 @@ def insert_csat_rating():
 
     try:
         cursor = conn.cursor()
-        # Update the SQL query to insert data into the 'project_csat_customer_rating' table
-        cursor.execute(
-            "INSERT INTO project_csat_customer_rating (csat_request_id, csat_question_id, csat_rating) VALUES (%s, %s, %s)",
-            (data['csat_request_id'], data['csat_question_id'], data['csat_rating'])
-        )
+        for rating in all_ratings:
+            if not all(rating.get(field) for field in ['csat_request_id', 'csat_question_id', 'csat_rating']):
+                return jsonify({'error': 'Missing data for required fields'}), 400
+            cursor.execute(
+                "INSERT INTO project_csat_customer_rating (csat_request_id, csat_question_id, csat_rating) VALUES (%s, %s, %s)",
+                (rating['csat_request_id'], rating['csat_question_id'], rating['csat_rating'])
+            )
         conn.commit()
-        return jsonify({'message': 'CSAT rating inserted successfully'}), 201
+        return jsonify({'message': 'CSAT ratings inserted successfully'}), 201
     except Exception as e:
         conn.rollback()
-        app.logger.error("Failed to insert CSAT rating data:", e)
+        app.logger.error("Failed to insert CSAT rating:", str(e))
         return jsonify({'error': str(e)}), 500
     finally:
         if cursor:
             cursor.close()
         if conn:
             conn.close()
+
 
 # API route to insert data into 'project_csat_questions' table
 @app.route("/insert_csat_question", methods=['POST'])  
@@ -269,34 +274,25 @@ def insert_csat_question():
             conn.close()
 
 
-# Route to insert data into the project_csat_customer_rating table
-@app.route('/insert_csat_rating', methods=['POST'])
-def insert_csat_rating():
-    # Obtain data from request
-    data = request.get_json()
-    csat_request_id = data.get('csat_request_id')
-    csat_question_id = data.get('csat_question_id')
-    csat_rating = data.get('csat_rating')
 
-    # Check if all necessary data is present
-    if not all([csat_request_id, csat_question_id, csat_rating]):
-        return jsonify({"error": "Missing one or more required fields"}), 400
-
+# api to fetch questions related to a particular csat id.
+@app.route("/fetch_csat_id_questions/<int:csat_id>", methods=["GET"])
+def get_questions(csat_id):
     conn = get_db_connection()
-    if not conn:
+    if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
 
+    cursor = None
     try:
-        cursor = conn.cursor()
-        query = """
-        INSERT INTO project_csat_customer_rating (csat_request_id, csat_question_id, csat_rating)
-        VALUES (%s, %s, %s)
-        """
-        cursor.execute(query, (csat_request_id, csat_question_id, csat_rating))
-        conn.commit()
-        return jsonify({"message": "CSAT rating inserted successfully"}), 201
-    except Error as e:
-        conn.rollback()  # Roll back the transaction in case of error
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT id AS question_id, questions FROM project_csat_questions WHERE csat_request_id = %s",
+            (csat_id,)
+        )
+        questions = cursor.fetchall()
+        return jsonify({"questions": questions})
+    except Exception as e:
+        app.logger.error("Failed to get questions for csat ID:", csat_id, e)
         return jsonify({"error": str(e)}), 500
     finally:
         if cursor:
@@ -304,7 +300,6 @@ def insert_csat_rating():
         if conn:
             conn.close()
 
-            
 # fetching the projects related to a particular account id.
 @app.route("/get_projects_by_account_id/<int:account_id>", methods=["GET"])
 def get_projects_by_account_id(account_id):
@@ -399,14 +394,14 @@ def upload_questions():
 @app.route('/send_review_link', methods=['POST'])
 def send_review_link():
     csat_id = request.json.get('csat_id')
-    questions = request.json.get('questions')
     customer_id = request.json.get('customer_id')
-    print('questions',questions)
+    print('CSAT ID', csat_id)
+    print('Customer ID', customer_id)
+
     # Create a token that expires in 24 hours
     expiration = datetime.utcnow() + timedelta(hours=24)
     token = jwt.encode({
         'csat_id': csat_id,
-        'questions': questions,
         'customer_id': customer_id,
         'exp': expiration
     }, app.config['SECRET_KEY'], algorithm='HS256')
@@ -439,20 +434,20 @@ def send_review_link():
         if conn:
             conn.close()
 
+
 @app.route('/review_user/<token>')
 def review_user(token):
     try:
         # Decode the JWT token
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
 
-        # Extract the csat_id, questions, and customer_id from the token
+        # Extract the csat_id, questions with their IDs, and customer_id from the token
         csat_id = data['csat_id']
-        questions = data['questions']  # Questions are now coming directly from the token
-        print(questions)
         customer_id = data['customer_id']  # Customer ID is also retrieved from the token
 
         # Render the HTML template with the data from the token
-        return render_template('review_user.html', csat_id=csat_id, questions=questions, customer_id=customer_id)
+        # The questions_with_ids is a list of dictionaries with question details
+        return render_template('review_user.html', csat_id=csat_id, customer_id=customer_id)
     except jwt.ExpiredSignatureError:
         return 'This link has expired.', 403
     except Exception as e:
@@ -502,6 +497,11 @@ def submit_ratings_admin():
     # For example, you can save the ratings to a database
     print(ratings)
     return jsonify({'success': True})
+
+@app.route('/logout')
+def logout():
+    return render_template('logout.html')
+
 
 # Start the Flask app
 if __name__ == '__main__':

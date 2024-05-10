@@ -19,8 +19,8 @@ body, html {
 }
 
 .rating {
-    direction: rtl; /* Reverse the order of star ratings for easier interaction */
     font-size: 24px;
+    display: inline-block; /* Ensures labels are inline and manage their direction */
 }
 
 .rating > input {
@@ -34,7 +34,7 @@ body, html {
 
 .rating > input:checked ~ label,
 .rating > input:hover ~ label,
-.rating > label:hover ~ label { /* Color stars on hover or checked */
+.rating > label:hover ~ label { /* Color stars on hover or checked, adjusted for ltr */
     color: gold;
 }
 

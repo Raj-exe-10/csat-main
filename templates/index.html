@@ -1,10 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Users Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSAT - Customer Review Application</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
-    <h1>List of Users</h1>
-    {{data}}
+    <header>
+        <h1>CSAT - Customer Review Application</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('form') }}">Insert User</a></li>
+            <li><a href="{{ url_for('insert_account_info_page') }}">Insert Account Info</a></li>
+            <li><a href="{{ url_for('insert_project_info_page') }}">Insert Project Info</a></li>
+            <li>
+                <div class="dropdown">
+                    <button class="dropbtn">Options</button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('csat_id_page') }}">CSAT Form</a>
+                        <a href="#">Questions</a>
+                        <a href="#">Reviews</a>
+                        <a href="#">Results</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Content goes here -->
+    </main>
+
+    <footer>
+        <p>&copy; 2023 CSAT Application</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>
 </html>
